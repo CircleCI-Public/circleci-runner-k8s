@@ -11,7 +11,15 @@ Repository with various files to install CircleCI's runner on Kubernetes via Hel
 
 ## Setup
 1. Clone this repository.
-2. Modify values as needed in `values.yaml`.
+2. Modify values as needed in `values.yaml`:
+
+Value             | Description                  | Default
+------------------|------------------------------|-------------
+image.repository, image.tag | You can extend a custom Docker image from  the CircleCI default runner and use that instead. | circleci/runner, launch-agent
+resource_class    | The resource class you created for your runner. We recommend not inserting it into `values.yaml` directly and setting it when you install your chart instead. See next step. | ""
+runner_token      | The token you created for your runner. We recommend not inserting it into `values.yaml` directly and setting it when you install your chart instead. See next step. | ""
+All other values  | Modify at your own discretion and risk. | N/A
+
 3. Using the resource class name and token you created in the [Prerequisites](#prerequisites) section, you'll want to set parameters as you install the Helm chart:
 
 ```bash
