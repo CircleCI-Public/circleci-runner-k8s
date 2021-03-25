@@ -37,12 +37,12 @@ spec:
             - name: "CIRCLECI_RESOURCE_CLASS"
               valueFrom:
                 secretKeyRef:
-                  key: resource_class
+                  key: resourceClass
                   name: config-values
             - name: "CIRCLECI_API_TOKEN"
               valueFrom:
                 secretKeyRef:
-                  key: runner_token
+                  key: runnerToken
                   name: config-values
           ports:
             - name: http

@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+replicaCount: 5
 
 # You can extend a custom image from our runner and use
 # that repository instead. See:
@@ -15,10 +15,10 @@ image:
 
 # Refers to the resource class you created for your runner. See:
 # https://circleci.com/docs/2.0/runner-installation/?section=executors-and-images#authentication
-resource_class: ""
+resourceClass: ""
 # Runner API token. See:
 # https://circleci.com/docs/2.0/runner-installation/
-runner_token: ""
+runnerToken: ""
 
 imagePullSecrets: []
 nameOverride: ""
