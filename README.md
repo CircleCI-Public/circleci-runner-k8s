@@ -25,8 +25,8 @@ All other values  | Modify at your own discretion and risk. | N/A
 
 ```bash
 $ helm install "circleci-runner" ./ \
-  --set runner_token=$CIRCLECI_RUNNER_TOKEN \
-  --set resource_class=$CIRCLECI_RUNNER_RESOURCE_CLASS \
+  --set runnerToken=$CIRCLECI_RUNNER_TOKEN \
+  --set resourceClass=$CIRCLECI_RUNNER_RESOURCE_CLASS \
   --namespace your-namespace
 ```
 4. Call your runner class(es) in your job(s). Example:
