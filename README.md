@@ -57,7 +57,7 @@ jobs:
 
 ```bash
 $ helm upgrade "circleci-runner" ./ \
-  --set runner_token=$CIRCLECI_RUNNER_TOKEN \
-  --set resource_class=$CIRCLECI_RUNNER_RESOURCE_CLASS \
+  --set runnerToken=$CIRCLECI_RUNNER_TOKEN \
+  --set resourceClass=$CIRCLECI_RUNNER_RESOURCE_CLASS \
   --namespace your-namespace
 ```
