@@ -53,7 +53,7 @@ jobs:
 ```
 
 ## Known Issues/Pending Work
-- Autoscaling is not yet implemented - for now, you'll need to manually modify the `replicaCount` in `values.yaml` and update the cluster and then run:
+- Autoscaling is not yet implemented - for now, you'll need to manually modify the `replicaCount` in `values.yaml` and update the cluster and run:
 
 ```bash
 $ helm upgrade "circleci-runner" ./ \
@@ -61,3 +61,5 @@ $ helm upgrade "circleci-runner" ./ \
   --set resourceClass=$CIRCLECI_RUNNER_RESOURCE_CLASS \
   --namespace your-namespace
 ```
+
+- Containers are not currently privileged, so you would not be able to execute privileged workloads (e.g., Docker in Docker).
