@@ -22,7 +22,7 @@ parameters:
     default: ""
 
 orbs:
-  eks: aws-eks@1.0.3
+  eks: circleci/aws-eks@1.0.3
 
 executors:
   runner:
