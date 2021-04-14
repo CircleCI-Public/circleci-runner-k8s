@@ -45,6 +45,7 @@ workflows:
               only: main
       - eks/install-helm-on-cluster:
           name: install-helm-on-cluster-<< pipeline.git.revision >>
+          cluster-name: runner-k8s-test-<< pipeline.git.revision >>
           enable-cluster-wide-admin-access: true
           context: custeng-aws
           requires:
