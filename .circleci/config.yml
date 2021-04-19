@@ -35,6 +35,10 @@ executors:
 commands:
   teardown:
     description: Make API call to trigger CircleCI teardown workflow
+    parameters:
+      when:
+        type: string
+        default: always
     steps:
       - run:
           name: Call the cleanup workflow
@@ -43,6 +47,7 @@ commands:
               -H 'Content-Type: application/json' \
               -H 'Accept: application/json' \
               -d '{"branch": "'"${CIRCLE_BRANCH}"'", "parameters": {"main": false, "teardown": true, "test": false}}'
+          when: << parameters.when >>
 
 ########################
 # Workflow Definitions #
@@ -158,8 +163,7 @@ jobs:
                 fi
               fi
             done
-      - teardown:
-          when: always
+      - teardown
 
   runner_job:
     executor: runner
