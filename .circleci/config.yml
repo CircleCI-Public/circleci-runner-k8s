@@ -41,6 +41,7 @@ workflows:
     jobs:
       - eks/create-cluster:
           name: create-cluster-<< pipeline.git.revision >>
+          aws-region: us-west-2
           cluster-name: runner-k8s-test-<< pipeline.git.revision >>
           context: custeng-aws
           filters:
@@ -48,6 +49,7 @@ workflows:
               only: main
       - eks/install-helm-on-cluster:
           name: install-helm-on-cluster-<< pipeline.git.revision >>
+          aws-region: us-west-2
           cluster-name: runner-k8s-test-<< pipeline.git.revision >>
           enable-cluster-wide-admin-access: true
           context: custeng-aws
@@ -55,6 +57,7 @@ workflows:
             - create-cluster-<< pipeline.git.revision >>
       - eks/install-helm-chart:
           name: install-runners-<< pipeline.git.revision >>
+          aws-region: us-west-2
           chart: .
           cluster-name: runner-k8s-test-<< pipeline.git.revision >>
           release-name: << pipeline.git.revision >>
@@ -78,11 +81,13 @@ workflows:
     jobs:
       - eks/delete-helm-release:
           name: uninstall-runners-<< pipeline.parameters.git-sha >>
+          aws-region: us-west-2
           cluster-name: runner-k8s-test-<< pipeline.parameters.git-sha >>
           release-name: << pipeline.parameters.git-sha >>
           context: custeng-aws
       - eks/delete-cluster:
           name: delete-cluster-<< pipeline.parameters.git-sha >>
+          aws-region: us-west-2
           cluster-name: runner-k8s-test-<< pipeline.parameters.git-sha >>
           context: custeng-aws
           requires:
