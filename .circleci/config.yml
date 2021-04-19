@@ -60,6 +60,9 @@ workflows:
           filters:
             branches:
               only: main
+          post-steps:
+            - teardown:
+                when: on_fail
       - eks/install-helm-on-cluster:
           name: install-helm-on-cluster-<< pipeline.git.revision >>
           aws-region: us-west-2
@@ -68,6 +71,9 @@ workflows:
           context: custeng-aws
           requires:
             - create-cluster-<< pipeline.git.revision >>
+          post-steps:
+            - teardown:
+                when: on_fail
       - eks/install-helm-chart:
           name: install-runners-<< pipeline.git.revision >>
           aws-region: us-west-2
@@ -78,6 +84,9 @@ workflows:
           context: custeng-aws
           requires:
             - install-helm-on-cluster-<< pipeline.git.revision >>
+          post-steps:
+            - teardown:
+                when: on_fail
       - approve-test:
           type: approval
           requires:
@@ -150,6 +159,8 @@ jobs:
                 fi
               fi
             done
+      - teardown:
+          when: always
 
   runner_job:
     executor: runner
