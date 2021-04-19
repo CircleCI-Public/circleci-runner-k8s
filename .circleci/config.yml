@@ -43,7 +43,6 @@ commands:
               -H 'Content-Type: application/json' \
               -H 'Accept: application/json' \
               -d '{"branch": "'"${CIRCLE_BRANCH}"'", "parameters": {"main": false, "teardown": true, "test": false}}'
-          when: always
 
 ########################
 # Workflow Definitions #
