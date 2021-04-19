@@ -32,6 +32,19 @@ executors:
     machine: true
     resource_class: circleci/k8s-test
 
+commands:
+  teardown:
+    description: Make API call to trigger CircleCI teardown workflow
+    steps:
+      - run:
+          name: Call the cleanup workflow
+          command: |
+            curl -u ${CIRCLE_TOKEN}: -X POST https://circleci.com/api/v2/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline \
+              -H 'Content-Type: application/json' \
+              -H 'Accept: application/json' \
+              -d '{"branch": "'"${CIRCLE_BRANCH}"'", "parameters": {"main": false, "teardown": true, "test": false}}'
+          when: always
+
 ########################
 # Workflow Definitions #
 ########################
@@ -137,13 +150,6 @@ jobs:
                 fi
               fi
             done
-      - run:
-          name: Call the cleanup workflow
-          command: |
-            curl -u ${CIRCLE_TOKEN}: -X POST https://circleci.com/api/v2/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline \
-              -H 'Content-Type: application/json' \
-              -H 'Accept: application/json' \
-              -d '{"branch": "'"${CIRCLE_BRANCH}"'", "parameters": {"main": false, "teardown": true, "test": false}}'
 
   runner_job:
     executor: runner
