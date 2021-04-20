@@ -90,7 +90,7 @@ workflows:
       - eks/install-helm-on-cluster:
           name: install-helm-on-cluster-<< pipeline.git.revision >>
           aws-region: us-west-2
-          cluster-name: circleci-runner-k8s-eks-stack
+          cluster-name: circleci-runner-k8s-cluster
           enable-cluster-wide-admin-access: true
           context:
             - custeng-aws
@@ -104,7 +104,7 @@ workflows:
           name: install-runners-<< pipeline.git.revision >>
           aws-region: us-west-2
           chart: .
-          cluster-name: circleci-runner-k8s-eks-stack
+          cluster-name: circleci-runner-k8s-cluster
           release-name: << pipeline.git.revision >>
           values-to-override: "runnerToken=$K8S_RUNNER_TOKEN,resourceClass=$K8S_RUNNER_RESOURCE"
           context:
@@ -132,7 +132,7 @@ workflows:
       - eks/delete-helm-release:
           name: uninstall-runners-<< pipeline.parameters.git-sha >>
           aws-region: us-west-2
-          cluster-name: circleci-runner-k8s-eks-stack
+          cluster-name: circleci-runner-k8s-cluster
           release-name: << pipeline.parameters.git-sha >>
           context: custeng-aws
 
