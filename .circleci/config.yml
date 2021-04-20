@@ -23,6 +23,7 @@ parameters:
 
 orbs:
   eks: circleci/aws-eks@1.0.3
+  tf: circleci/terraform@2.0.1
 
 executors:
   base:
@@ -46,6 +47,7 @@ commands:
             echo "${CIRCLE_PROJECT_USERNAME}"
             echo "${CIRCLE_PROJECT_REPONAME}"
             echo "${CIRCLE_BRANCH}"
+          when: << parameters.when >>
       - run:
           name: Call the cleanup workflow
           command: |
@@ -62,25 +64,39 @@ workflows:
   main:
     when: << pipeline.parameters.main >>
     jobs:
-      - eks/create-cluster:
-          name: create-cluster-<< pipeline.git.revision >>
-          aws-region: us-west-2
-          cluster-name: runner-k8s-test-<< pipeline.git.revision >>
-          context: custeng-aws
-          filters:
-            branches:
-              only: main
-          post-steps:
-            - teardown:
-                when: on_fail
+      - tf/fmt:
+          context:
+            - custeng-aws
+          checkout: true
+          path: terraform
+      - tf/plan:
+          context:
+            - custeng-aws
+          checkout: true
+          path: terraform
+          requires:
+            - tf/fmt
+      - approve-tf:
+          type: approval
+          requires:
+            - tf/plan
+      - tf/apply:
+          context:
+            - custeng-aws
+          checkout: true
+          path: terraform
+          requires:
+            - approve-tf
       - eks/install-helm-on-cluster:
           name: install-helm-on-cluster-<< pipeline.git.revision >>
           aws-region: us-west-2
-          cluster-name: runner-k8s-test-<< pipeline.git.revision >>
+          cluster-name: circleci-runner-k8s-eks-stack
           enable-cluster-wide-admin-access: true
-          context: custeng-aws
+          context:
+            - custeng-aws
+            - circleci-runner-k8s
           requires:
-            - create-cluster-<< pipeline.git.revision >>
+            - tf/apply
           post-steps:
             - teardown:
                 when: on_fail
@@ -88,10 +104,12 @@ workflows:
           name: install-runners-<< pipeline.git.revision >>
           aws-region: us-west-2
           chart: .
-          cluster-name: runner-k8s-test-<< pipeline.git.revision >>
+          cluster-name: circleci-runner-k8s-eks-stack
           release-name: << pipeline.git.revision >>
           values-to-override: "runnerToken=$K8S_RUNNER_TOKEN,resourceClass=$K8S_RUNNER_RESOURCE"
-          context: custeng-aws
+          context:
+            - custeng-aws
+            - circleci-runner-k8s
           requires:
             - install-helm-on-cluster-<< pipeline.git.revision >>
           post-steps:
@@ -114,16 +132,9 @@ workflows:
       - eks/delete-helm-release:
           name: uninstall-runners-<< pipeline.parameters.git-sha >>
           aws-region: us-west-2
-          cluster-name: runner-k8s-test-<< pipeline.parameters.git-sha >>
+          cluster-name: circleci-runner-k8s-eks-stack
           release-name: << pipeline.parameters.git-sha >>
           context: custeng-aws
-      - eks/delete-cluster:
-          name: delete-cluster-<< pipeline.parameters.git-sha >>
-          aws-region: us-west-2
-          cluster-name: runner-k8s-test-<< pipeline.parameters.git-sha >>
-          context: custeng-aws
-          requires:
-            - uninstall-runners-<< pipeline.parameters.git-sha >>
 
   test:
     when: << pipeline.parameters.test >>
