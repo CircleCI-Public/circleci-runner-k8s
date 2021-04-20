@@ -41,6 +41,12 @@ commands:
         default: always
     steps:
       - run:
+          name: Check env vars
+          command: |
+            echo "${CIRCLE_PROJECT_USERNAME}"
+            echo "${CIRCLE_PROJECT_REPONAME}"
+            echo "${CIRCLE_BRANCH}"
+      - run:
           name: Call the cleanup workflow
           command: |
             curl -u ${CIRCLE_TOKEN}: -X POST https://circleci.com/api/v2/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline \
