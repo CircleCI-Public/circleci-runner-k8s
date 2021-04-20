@@ -23,6 +23,7 @@ parameters:
 
 orbs:
   eks: circleci/aws-eks@1.0.3
+  helm: circleci/helm@1.2.0
   tf: circleci/terraform@2.0.1
 
 executors:
@@ -42,19 +43,12 @@ commands:
         default: always
     steps:
       - run:
-          name: Check env vars
-          command: |
-            echo "${CIRCLE_PROJECT_USERNAME}"
-            echo "${CIRCLE_PROJECT_REPONAME}"
-            echo "${CIRCLE_BRANCH}"
-          when: << parameters.when >>
-      - run:
           name: Call the cleanup workflow
           command: |
             curl -u ${CIRCLE_TOKEN}: -X POST https://circleci.com/api/v2/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline \
               -H 'Content-Type: application/json' \
               -H 'Accept: application/json' \
-              -d '{"branch": "'"${CIRCLE_BRANCH}"'", "parameters": {"main": false, "teardown": true, "test": false}}'
+              -d '{"branch": "'"${CIRCLE_BRANCH}"'", "parameters": {"main": false, "teardown": true, "test": false, "git-sha": "'"${CIRCLE_SHA1}"'"}}'
           when: << parameters.when >>
 
 ########################
@@ -87,19 +81,12 @@ workflows:
           path: terraform
           requires:
             - approve-tf
-      - eks/install-helm-on-cluster:
-          name: install-helm-on-cluster-<< pipeline.git.revision >>
-          aws-region: us-west-2
-          cluster-name: circleci-runner-k8s-cluster
-          enable-cluster-wide-admin-access: true
+      - install_helm:
           context:
             - custeng-aws
             - circleci-runner-k8s
           requires:
             - tf/apply
-          post-steps:
-            - teardown:
-                when: on_fail
       - eks/install-helm-chart:
           name: install-runners-<< pipeline.git.revision >>
           aws-region: us-west-2
@@ -111,7 +98,7 @@ workflows:
             - custeng-aws
             - circleci-runner-k8s
           requires:
-            - install-helm-on-cluster-<< pipeline.git.revision >>
+            - install_helm
           post-steps:
             - teardown:
                 when: on_fail
@@ -154,7 +141,7 @@ jobs:
             curl -u ${CIRCLE_TOKEN}: -X POST https://circleci.com/api/v2/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline \
               -H 'Content-Type: application/json' \
               -H 'Accept: application/json' \
-              -d '{"branch": "'"${CIRCLE_BRANCH}"'", "parameters": {"main": false, "teardown": false, "test": true}}' > runner-pipeline.json
+              -d '{"branch": "'"${CIRCLE_BRANCH}"'", "parameters": {"main": false, "teardown": false, "test": true, "git-sha": "'"${CIRCLE_SHA1}"'"}}' > runner-pipeline.json
             cat runner-pipeline.json
 
       - run:
@@ -181,6 +168,17 @@ jobs:
               fi
             done
       - teardown
+
+  install_helm:
+    executor: eks/python3
+    steps:
+      - helm/install-helm-client
+      - eks/update-kubeconfig-with-authenticator:
+          cluster-name: "circleci-runner-k8s-cluster"
+          aws-region: "us-west-2"
+      - helm/install-helm-on-cluster:
+          cluster-name: "circleci-runner-k8s-cluster"
+          aws-region: "us-west-2"
 
   runner_job:
     executor: runner
