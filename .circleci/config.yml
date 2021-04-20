@@ -176,9 +176,7 @@ jobs:
       - eks/update-kubeconfig-with-authenticator:
           cluster-name: "circleci-runner-k8s-cluster"
           aws-region: "us-west-2"
-      - helm/install-helm-on-cluster:
-          cluster-name: "circleci-runner-k8s-cluster"
-          aws-region: "us-west-2"
+      - helm/install-helm-on-cluster
 
   runner_job:
     executor: runner
