@@ -56,6 +56,11 @@ workflows:
   main:
     when: << pipeline.parameters.main >>
     jobs:
+      - approve-deploy:
+          type: approval
+          filters:
+            branches:
+              only: main
       - eks/install-helm-chart:
           name: install-runners-<< pipeline.git.revision >>
           aws-region: us-west-2
@@ -67,6 +72,8 @@ workflows:
           context:
             - custeng-aws
             - circleci-runner-k8s
+          requires:
+            - approve-deploy
           pre-steps:
             - checkout
           post-steps:
@@ -111,11 +118,11 @@ jobs:
       - run:
           name: Trigger a pipeline
           command: |
-            curl -u ${CIRCLE_TOKEN}: -X POST https://circleci.com/api/v2/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline \
+            curl --silent -u ${CIRCLE_TOKEN}: -X POST https://circleci.com/api/v2/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline \
               -H 'Content-Type: application/json' \
               -H 'Accept: application/json' \
               -d '{"branch": "'"${CIRCLE_BRANCH}"'", "parameters": {"main": false, "teardown": false, "test": true, "git-sha": "'"${CIRCLE_SHA1}"'"}}' > runner-pipeline.json
-            cat runner-pipeline.json
+            cat runner-pipeline.json | jq
 
       - run:
           name: Poll pipeline's workflow, check its status every 5s
@@ -123,20 +130,20 @@ jobs:
             pipeline_id=$(cat runner-pipeline.json | jq -r '.id')
 
             while true; do
-              curl -u ${CIRCLE_TOKEN}: -X GET https://circleci.com/api/v2/pipeline/${pipeline_id}/workflow \
+              curl --silent -u ${CIRCLE_TOKEN}: -X GET https://circleci.com/api/v2/pipeline/${pipeline_id}/workflow \
                 -H 'Content-Type: application/json' \
                 -H 'Accept: application/json' > runner-workflows.json
-              cat runner-workflows.json
+              cat runner-workflows.json | jq
               status=$(cat runner-workflows.json | jq -r '.items[0].status')
 
               if [[ "$status" == "running" ]]; then
-                echo "Still running..."
+                printf "\nStill running...\n"
                 sleep 5
               else
                 if [[ "$status" == "success" ]]; then
-                  echo "Runner job succeeded" && exit 0
+                  printf "\nRunner job succeeded\n" && exit 0
                 elif [[ "$status" =~ failed|failing|error|canceled ]]; then
-                  echo "Runner job failed" && exit 1
+                  printf "\nRunner job failed\n" && exit 1
                 fi
               fi
             done
