@@ -123,7 +123,7 @@ jobs:
             pipeline_id=$(cat runner-pipeline.json | jq -r '.id')
 
             while true; do
-              curl -u ${CIRCLE_TOKEN}: -X POST https://circleci.com/api/v2/pipeline/${pipeline_id}/workflow \
+              curl -u ${CIRCLE_TOKEN}: -X GET https://circleci.com/api/v2/pipeline/${pipeline_id}/workflow \
                 -H 'Content-Type: application/json' \
                 -H 'Accept: application/json' > runner-workflows.json
               cat runner-workflows.json
