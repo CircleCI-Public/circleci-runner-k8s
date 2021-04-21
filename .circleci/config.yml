@@ -79,7 +79,7 @@ workflows:
       - test-and-teardown:
           name: test-runners-<< pipeline.git.revision >>
           context:
-            - circle-api
+            - circleci-runner-k8s
           requires:
             - approve-test
 
