@@ -53,10 +53,10 @@ jobs:
 ```
 
 ## Support Scope
-- Customers who modify the chart beyond values in the `values.yaml` do so at their own risk. The type of support CircleCI provides for those customizations will be limited.
+- Customers who modify the chart beyond values in `values.yaml` do so at their own risk. The type of support CircleCI provides for those customizations will be limited.
 
 ## Reporting Issues
-- Customers are encouraged to open issues here in GitHub as well as [open support tickets](https://support.circleci.com/hc/en-us/).
+- Customers are encouraged to open issues here to report bugs or problems, and [open support tickets](https://support.circleci.com/hc/en-us/) to receive specific help from support engineers.
 
 ## Known Issues/Pending Work
 - Autoscaling is not yet implemented - for now, you'll need to manually modify the `replicaCount` in `values.yaml` and update the cluster and run:

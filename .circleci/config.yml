@@ -23,7 +23,6 @@ parameters:
 
 orbs:
   eks: circleci/aws-eks@1.1.0
-  tf: circleci/terraform@2.0.1
 
 executors:
   base:
@@ -57,29 +56,6 @@ workflows:
   main:
     when: << pipeline.parameters.main >>
     jobs:
-      - tf/fmt:
-          context:
-            - custeng-aws
-          checkout: true
-          path: terraform
-      - tf/plan:
-          context:
-            - custeng-aws
-          checkout: true
-          path: terraform
-          requires:
-            - tf/fmt
-      - approve-tf:
-          type: approval
-          requires:
-            - tf/plan
-      - tf/apply:
-          context:
-            - custeng-aws
-          checkout: true
-          path: terraform
-          requires:
-            - approve-tf
       - eks/install-helm-chart:
           name: install-runners-<< pipeline.git.revision >>
           aws-region: us-west-2
@@ -90,8 +66,6 @@ workflows:
           context:
             - custeng-aws
             - circleci-runner-k8s
-          requires:
-            - tf/apply
           pre-steps:
             - checkout
           post-steps:
