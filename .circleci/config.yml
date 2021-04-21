@@ -62,6 +62,7 @@ workflows:
           chart: .
           cluster-name: circleci-runner-k8s-cluster
           release-name: << pipeline.git.revision >>
+          helm-version: 3.5.2
           values-to-override: "runnerToken=$K8S_RUNNER_TOKEN,resourceClass=$K8S_RUNNER_RESOURCE,replicaCount=5"
           context:
             - custeng-aws
@@ -90,6 +91,7 @@ workflows:
           aws-region: us-west-2
           cluster-name: circleci-runner-k8s-cluster
           release-name: << pipeline.parameters.git-sha >>
+          helm-version: 3.5.2
           context: custeng-aws
           pre-steps:
             - checkout
