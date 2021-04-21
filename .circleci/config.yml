@@ -23,7 +23,6 @@ parameters:
 
 orbs:
   eks: circleci/aws-eks@1.0.3
-  helm: circleci/helm@1.2.0
   tf: circleci/terraform@2.0.1
 
 executors:
@@ -81,24 +80,18 @@ workflows:
           path: terraform
           requires:
             - approve-tf
-      - install_helm:
-          context:
-            - custeng-aws
-            - circleci-runner-k8s
-          requires:
-            - tf/apply
       - eks/install-helm-chart:
           name: install-runners-<< pipeline.git.revision >>
           aws-region: us-west-2
           chart: .
           cluster-name: circleci-runner-k8s-cluster
           release-name: << pipeline.git.revision >>
-          values-to-override: "runnerToken=$K8S_RUNNER_TOKEN,resourceClass=$K8S_RUNNER_RESOURCE"
+          values-to-override: "runnerToken=$K8S_RUNNER_TOKEN,resourceClass=$K8S_RUNNER_RESOURCE,replicaCount=5"
           context:
             - custeng-aws
             - circleci-runner-k8s
           requires:
-            - install_helm
+            - tf/apply
           post-steps:
             - teardown:
                 when: on_fail
@@ -169,18 +162,9 @@ jobs:
             done
       - teardown
 
-  install_helm:
-    executor: eks/python3
-    steps:
-      - helm/install-helm-client:
-          version: "v3.5.2"
-      - eks/update-kubeconfig-with-authenticator:
-          cluster-name: "circleci-runner-k8s-cluster"
-          aws-region: "us-west-2"
-      - helm/install-helm-on-cluster
-
   runner_job:
     executor: runner
+    parallelism: 5
     steps:
       - run: 
           name: Verify environment
