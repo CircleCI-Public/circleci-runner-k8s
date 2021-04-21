@@ -125,7 +125,7 @@ jobs:
             while true; do
               curl -u ${CIRCLE_TOKEN}: -X POST https://circleci.com/api/v2/pipeline/${pipeline_id}/workflow \
                 -H 'Content-Type: application/json' \
-                -H 'Accept: application/json' > runner-workflows.json \
+                -H 'Accept: application/json' > runner-workflows.json
               cat runner-workflows.json
               status=$(cat runner-workflows.json | jq -r '.items[0].status')
 
