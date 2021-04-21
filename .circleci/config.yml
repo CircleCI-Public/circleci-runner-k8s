@@ -22,7 +22,7 @@ parameters:
     default: ""
 
 orbs:
-  eks: circleci/aws-eks@1.0.3
+  eks: circleci/aws-eks@1.1.0
   tf: circleci/terraform@2.0.1
 
 executors:
