@@ -92,6 +92,8 @@ workflows:
             - circleci-runner-k8s
           requires:
             - tf/apply
+          pre-steps:
+            - checkout
           post-steps:
             - teardown:
                 when: on_fail
@@ -115,6 +117,8 @@ workflows:
           cluster-name: circleci-runner-k8s-cluster
           release-name: << pipeline.parameters.git-sha >>
           context: custeng-aws
+          pre-steps:
+            - checkout
 
   test:
     when: << pipeline.parameters.test >>
