@@ -172,7 +172,8 @@ jobs:
   install_helm:
     executor: eks/python3
     steps:
-      - helm/install-helm-client
+      - helm/install-helm-client:
+          version: "v3.5.2"
       - eks/update-kubeconfig-with-authenticator:
           cluster-name: "circleci-runner-k8s-cluster"
           aws-region: "us-west-2"
