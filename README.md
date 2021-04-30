@@ -1,5 +1,6 @@
-# CircleCI Runner Setup
+# CircleCI Runner on Kubernetes [PREVIEW]
 
+**NOTE: This feature is still in preview.**
 Repository with various files to install CircleCI's runner on Kubernetes via Helm chart.
 
 ## Prerequisites
