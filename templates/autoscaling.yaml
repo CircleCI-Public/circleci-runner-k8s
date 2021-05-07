@@ -1,0 +1,21 @@
+apiVersion: autoscaling/v2beta2
+kinda: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "circleci-runner.fullname" . }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "circleci-runner.fullname" . }}
+  minReplicas: {{ .Values.desiredReplicas }}
+  maxReplicas: {{ .Values.maxReplicas }}
+  metrics:
+  - type: External
+    external:
+      metric:
+        name: queue_runner_jobs
+        selector: "queue=outstanding_tasks"
+      target:
+        type: AverageValue
+        averageValue: 1
+

@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "circleci-runner.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.desiredReplicas }}
   selector:
     matchLabels:
       {{- include "circleci-runner.selectorLabels" . | nindent 6 }}
@@ -41,6 +41,22 @@ spec:
                 secretKeyRef:
                   key: runnerToken
                   name: config-values
+            {{- with .Values.maxRunTime }}
+            - name: "MAX_RUN_TIME"
+              value: {{ . }}
+            {{- end }}
+            {{- with .Values.noCleanup }}
+            - name: "NO_CLEANUP"
+              value: {{ . }}
+            {{- end }}
+            {{- with .Values.singleTask }}
+            - name: "SINGLE_TASK"
+              value: {{ . }}
+            {{- end }}
+            {{- with .Values.workingDirectory }}
+            - name: "WORKING_DIR"
+              value: {{ . }}
+            {{- end }}
           ports:
             - name: http
               containerPort: 80
