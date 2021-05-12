@@ -13,8 +13,8 @@ spec:
   - type: External
     external:
       metric:
-        name: queue_runner_jobs
-        selector: "queue=outstanding_tasks"
+        name: circleci_runners_total
+        selector: "queue=circleci_{{ .Values.resourceClass }}_runners_total"
       target:
         type: AverageValue
         averageValue: 1
