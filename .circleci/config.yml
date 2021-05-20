@@ -8,152 +8,33 @@ parameters:
     description: Run primary workflow that spins up minikube/k8s
     type: boolean
     default: true
-  teardown:
-    description: Run a teardown workflow to destroy the cluster
-    type: boolean
-    default: false
-  test:
-    description: Run the workflow requesting runner jobs
-    type: boolean
-    default: false
-  git-sha:
-    description: Original git sha to tear down
+  runner-image:
     type: string
-    default: ""
-
-orbs:
-  eks: circleci/aws-eks@1.1.0
+    default: 'launch-agent'
 
 executors:
-  base:
-    docker:
-      - image: cimg/base:2021.04
   runner:
     machine: true
     resource_class: circleci/k8s-test
-
-commands:
-  teardown:
-    description: Make API call to trigger CircleCI teardown workflow
-    parameters:
-      when:
-        type: string
-        default: always
-    steps:
-      - run:
-          name: Call the cleanup workflow
-          command: |
-            curl -u ${CIRCLE_TOKEN}: -X POST https://circleci.com/api/v2/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline \
-              -H 'Content-Type: application/json' \
-              -H 'Accept: application/json' \
-              -d '{"branch": "'"${CIRCLE_BRANCH}"'", "parameters": {"main": false, "teardown": true, "test": false, "git-sha": "'"${CIRCLE_SHA1}"'"}}'
-          when: << parameters.when >>
 
 ########################
 # Workflow Definitions #
 ########################
 workflows:
   main:
-    when: << pipeline.parameters.main >>
     jobs:
-      - approve-deploy:
-          type: approval
-          filters:
-            branches:
-              only: main
-      - eks/install-helm-chart:
-          name: install-runners-<< pipeline.git.revision >>
-          aws-region: us-west-2
-          chart: .
-          cluster-name: circleci-runner-k8s-cluster
-          release-name: << pipeline.git.revision >>
-          helm-version: v3.5.4
-          values-to-override: "runnerToken=$K8S_RUNNER_TOKEN,resourceClass=$K8S_RUNNER_RESOURCE,replicaCount=5"
-          context:
-            - custeng-aws
-            - circleci-runner-k8s
-          requires:
-            - approve-deploy
-          pre-steps:
-            - checkout
-          post-steps:
-            - teardown:
-                when: on_fail
-      - approve-test:
-          type: approval
-          requires:
-            - install-runners-<< pipeline.git.revision >>
-      - test-and-teardown:
-          name: test-runners-<< pipeline.git.revision >>
-          context:
-            - circleci-runner-k8s
-          requires:
-            - approve-test
-
-  teardown:
-    when: << pipeline.parameters.teardown >>
-    jobs:
-      - eks/delete-helm-release:
-          name: uninstall-runners-<< pipeline.parameters.git-sha >>
-          aws-region: us-west-2
-          cluster-name: circleci-runner-k8s-cluster
-          release-name: << pipeline.parameters.git-sha >>
-          helm-version: v3.5.4
-          context: custeng-aws
-          pre-steps:
-            - checkout
-
-  test:
-    when: << pipeline.parameters.test >>
-    jobs:
-      - runner_job
+      - runner-job
+      - deploy-in-minikube
 
 ###################
 # Job Definitions #
 ###################
 jobs:
-  test-and-teardown:
-    executor: base
-    steps:
-      - run:
-          name: Trigger a pipeline
-          command: |
-            curl --silent -u ${CIRCLE_TOKEN}: -X POST https://circleci.com/api/v2/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pipeline \
-              -H 'Content-Type: application/json' \
-              -H 'Accept: application/json' \
-              -d '{"branch": "'"${CIRCLE_BRANCH}"'", "parameters": {"main": false, "teardown": false, "test": true, "git-sha": "'"${CIRCLE_SHA1}"'"}}' > runner-pipeline.json
-            cat runner-pipeline.json | jq
-
-      - run:
-          name: Poll pipeline's workflow, check its status every 5s
-          command: |-
-            pipeline_id=$(cat runner-pipeline.json | jq -r '.id')
-
-            while true; do
-              curl --silent -u ${CIRCLE_TOKEN}: -X GET https://circleci.com/api/v2/pipeline/${pipeline_id}/workflow \
-                -H 'Content-Type: application/json' \
-                -H 'Accept: application/json' > runner-workflows.json
-              cat runner-workflows.json | jq
-              status=$(cat runner-workflows.json | jq -r '.items[0].status')
-
-              if [[ "$status" == "running" ]]; then
-                printf "\nStill running...\n"
-                sleep 5
-              else
-                if [[ "$status" == "success" ]]; then
-                  printf "\nRunner job succeeded\n" && exit 0
-                elif [[ "$status" =~ failed|failing|error|canceled ]]; then
-                  printf "\nRunner job failed\n" && exit 1
-                fi
-              fi
-            done
-      - teardown
-
-  runner_job:
+  runner-job:
     executor: runner
     parallelism: 5
     steps:
-      - run: 
+      - run:
           name: Verify environment
           command: |
             echo "Executing runner in a k8s cluster"
@@ -161,3 +42,35 @@ jobs:
             echo "Kubernetes Service Port: $KUBERNETES_SERVICE_PORT"
             printenv
 
+  deploy-in-minikube:
+    machine:
+      image: ubuntu-2004:202104-01
+    steps:
+      - checkout
+      - run:
+          name: install
+          command: |
+            DEBIAN_FRONTEND=noninteractive
+            sudo apt-get update -y
+            sudo apt-get install apt-transport-https
+            sudo apt install -y virtualbox
+            sudo snap install kubectl --classic
+            sudo snap install helm --classic
+
+            curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+            sudo dpkg -i minikube_latest_amd64.deb && minikube version
+            rm minikube_latest_amd64.deb
+      - run:
+          name: minikube start
+          command: |
+            minikube version
+            minikube start
+      - run:
+          name: install helm chart
+          command: |
+            helm install runner . --set image.tag=<< pipeline.parameters.runner-image >> --set runnerToken=$K8S_RUNNER_TOKEN --set resourceClass=$K8S_RUNNER_RESOURCE
+      - run:
+          name: wait for completed task
+          command: |
+            timeout 5m ./scripts/wait_for_task_complete.sh
+            sleep 5s
