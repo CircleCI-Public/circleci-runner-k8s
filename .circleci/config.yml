@@ -48,7 +48,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: install
+          name: install minikube
           command: |
             DEBIAN_FRONTEND=noninteractive
             sudo apt-get update -y
