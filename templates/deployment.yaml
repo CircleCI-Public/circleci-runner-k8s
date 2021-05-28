@@ -43,10 +43,6 @@ spec:
                 secretKeyRef:
                   key: runnerToken
                   name: config-values
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
           livenessProbe:
             exec:
               command:
