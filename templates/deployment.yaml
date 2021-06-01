@@ -24,6 +24,8 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      serviceAccountName: circleci-runner
+      automountServiceAccountToken: false
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -41,10 +43,6 @@ spec:
                 secretKeyRef:
                   key: runnerToken
                   name: config-values
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
           livenessProbe:
             exec:
               command:
