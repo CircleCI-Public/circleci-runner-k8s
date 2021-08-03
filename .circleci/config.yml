@@ -25,10 +25,6 @@ workflows:
     jobs:
       - runner-job
       - deploy-in-minikube
-      - verify-job-success:
-          requires:
-            - runner-job
-
 
 ###################
 # Job Definitions #
@@ -57,7 +53,7 @@ jobs:
             DEBIAN_FRONTEND=noninteractive
             sudo apt-get update -y
             sudo apt-get install apt-transport-https
-            sudo apt install -y virtualbox
+            sudo apt install -y virtualbox jq
             sudo snap install kubectl --classic
             sudo snap install helm --classic
 
@@ -73,14 +69,7 @@ jobs:
           name: install helm chart
           command: |
             helm install runner . --set image.tag=<< pipeline.parameters.runner-image >> --set runnerToken=$K8S_RUNNER_TOKEN --set resourceClass=$K8S_RUNNER_RESOURCE
-            #      - run:
-            #          name: wait for completed task
-            #          command: |
-            #            timeout 5m ./scripts/wait_for_task_complete.sh
-            #            sleep 5s
-
-  verify-job-success:
-    docker:
-      - image: alpine:latest
-    steps:
-      - run: echo "success"
+      - run:
+          name: wait for runner job completion
+          command: |
+            timeout 5m ./scripts/wait_for_task_complete.sh
