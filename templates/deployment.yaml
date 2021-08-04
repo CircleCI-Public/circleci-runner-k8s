@@ -43,6 +43,11 @@ spec:
                 secretKeyRef:
                   key: runnerToken
                   name: config-values
+            {{- if .Values.agentVersion }}
+            - name: "agent_version"
+              value: "{{ .Values.agentVersion }}"
+
+            {{- end }}
           livenessProbe:
             exec:
               command:

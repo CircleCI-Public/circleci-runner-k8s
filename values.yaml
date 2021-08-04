@@ -20,6 +20,9 @@ resourceClass: ""
 # https://circleci.com/docs/2.0/runner-installation/
 runnerToken: ""
 
+# The agent version to use for CircleCI Enterprise installations
+agentVersion: ""
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
