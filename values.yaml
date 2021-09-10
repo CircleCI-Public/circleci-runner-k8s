@@ -13,6 +13,10 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "launch-agent"
 
+configSecret:
+  create: true
+  name: config-values
+
 # Refers to the resource class you created for your runner. See:
 # https://circleci.com/docs/2.0/runner-installation/?section=executors-and-images#authentication
 resourceClass: ""
@@ -50,3 +54,4 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
