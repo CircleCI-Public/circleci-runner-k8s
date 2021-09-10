@@ -52,6 +52,22 @@ jobs:
       - run: echo "Hello from my custom runner!"
 ```
 
+### Setup with Optional Secret Creation
+There may be cases where you do not want Helm to create the Secret resource for you. One case would be if you were using a GitOps deployment tool such as ArgoCD or Flux. In these cases you would need to create a secret manually in the same namespace and cluster where the Helm managed runner resources will be deployed.
+1. Create the secret
+```bash
+$ kubectl create secret generic config-values \
+  --namespace your-namespace
+  --from-literal resourceClass=$CIRCLECI_RUNNER_RESOURCE_CLASS
+  --from-literal runnerToken=$CIRCLECI_RUNNER_RESOURCE_CLASS
+```
+2. Install the Helm chart
+```bash
+$ helm install "circleci-runner" ./ \
+  --set configSecret.create=false \
+  --namespace your-namespace
+```
+
 ## Support Scope
 - Customers who modify the chart beyond values in `values.yaml` do so at their own risk. The type of support CircleCI provides for those customizations will be limited.
 
