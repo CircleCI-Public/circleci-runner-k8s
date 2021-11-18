@@ -37,12 +37,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: resourceClass
-                  name: config-values
+                  name: {{ .Values.configSecret.name }}
             - name: "CIRCLECI_API_TOKEN"
               valueFrom:
                 secretKeyRef:
                   key: runnerToken
-                  name: config-values
+                  name: {{ .Values.configSecret.name }}
             {{- if .Values.agentVersion }}
             - name: "agent_version"
               value: "{{ .Values.agentVersion }}"
