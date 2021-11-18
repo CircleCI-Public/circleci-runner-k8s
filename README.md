@@ -57,8 +57,8 @@ There may be cases where you do not want Helm to create the Secret resource for 
 1. Create the secret
 ```bash
 $ kubectl create secret generic config-values \
-  --namespace your-namespace
-  --from-literal resourceClass=$CIRCLECI_RUNNER_RESOURCE_CLASS
+  --namespace your-namespace \
+  --from-literal resourceClass=$CIRCLECI_RUNNER_RESOURCE_CLASS \
   --from-literal runnerToken=$CIRCLECI_RUNNER_TOKEN
 ```
 2. Install the Helm chart
