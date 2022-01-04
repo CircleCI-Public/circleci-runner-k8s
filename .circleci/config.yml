@@ -64,7 +64,7 @@ jobs:
           name: minikube start
           command: |
             minikube version
-            minikube start
+            minikube start --driver=docker
       - run:
           name: install helm chart
           command: |
