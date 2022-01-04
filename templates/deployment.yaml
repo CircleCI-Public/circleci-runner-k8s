@@ -46,7 +46,10 @@ spec:
             {{- if .Values.agentVersion }}
             - name: "agent_version"
               value: "{{ .Values.agentVersion }}"
-
+            {{- end }}
+            {{- range $k, $v := .Values.launchAgentEnvironmentVariables }}
+            - name: "{{ $k }}"
+              value: "{{ $v }}"
             {{- end }}
           livenessProbe:
             exec:

@@ -13,6 +13,13 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "launch-agent"
 
+# These environment variables will be passed into the Launch Agent container
+# For example, setting the `runner.mode` (from https://circleci.com/docs/2.0/runner-config-reference/):
+#
+# launchAgentEnvironmentVariables:
+#   LAUNCH_AGENT_RUNNER_MODE: single-task
+launchAgentEnvironmentVariables: {}
+
 configSecret:
   create: true
   name: config-values
