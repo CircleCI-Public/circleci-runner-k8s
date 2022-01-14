@@ -55,3 +55,6 @@ tolerations: []
 
 affinity: {}
 
+env:
+  - name: "MY_VAR"
+    value: "the value of MY_VAR"
