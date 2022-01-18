@@ -47,6 +47,10 @@ spec:
             - name: "agent_version"
               value: "{{ .Values.agentVersion }}"
             {{- end }}
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              value: {{ .value }}
+            {{- end }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           resources:
