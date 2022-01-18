@@ -49,6 +49,18 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+
+automountServiceAccountToken: false
+
+livenessProbe:
+  exec:
+    command:
+      - /bin/sh
+      - -c
+      - ps -ef | grep circleci-launch-agent
+  initialDelaySeconds: 3
+  periodSeconds: 5
+
 nodeSelector: {}
 
 tolerations: []

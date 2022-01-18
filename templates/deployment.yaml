@@ -25,7 +25,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       serviceAccountName: circleci-runner
-      automountServiceAccountToken: false
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -47,18 +47,8 @@ spec:
             - name: "agent_version"
               value: "{{ .Values.agentVersion }}"
             {{- end }}
-            {{- range .Values.env }}
-            - name: {{ .name }}
-              value: {{ .value }}
-            {{- end }}
           livenessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - ps -ef | grep circleci-launch-agent
-            initialDelaySeconds: 3
-            periodSeconds: 5
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
