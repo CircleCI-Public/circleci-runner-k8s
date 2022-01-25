@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  circleci-runner:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-01-26T00:09:30.070181432+05:30"
+    description: A Helm chart for Kubernetes
+    digest: c899341e6e93312ea47228c48a18a3a0a65932393bea4b85d1b723a66373eaa1
+    name: circleci-runner
+    type: application
+    urls:
+    - https://raw.githubusercontent.com/CircleCI-Public/circleci-runner-k8s/main/circleci-runner-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-01-26T00:09:30.069612667+05:30"
