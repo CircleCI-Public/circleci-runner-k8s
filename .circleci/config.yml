@@ -63,6 +63,7 @@ jobs:
       - run:
           name: minikube start
           command: |
+            time docker version
             minikube version
             minikube start --driver=docker
       - run:
