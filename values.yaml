@@ -17,6 +17,10 @@ configSecret:
   create: true
   name: config-values
 
+serviceAccount:
+  create: true
+  name: circleci-runner
+
 # Refers to the resource class you created for your runner. See:
 # https://circleci.com/docs/2.0/runner-installation/?section=executors-and-images#authentication
 resourceClass: ""

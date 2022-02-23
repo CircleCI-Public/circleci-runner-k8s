@@ -71,6 +71,9 @@ $ helm install "circleci-runner" ./ \
   --namespace your-namespace
 ```
 
+### Setup with parametrized Service Account 
+There may be cases where you do not want Helm to create the Service Account resource for you or you would like to use different name for it. One case would be if you are creating multiple Helm Releases. In these cases you would need to create a service account on different name or reuse existing one. Otherwise deployment would failed with HR error: *"Unable to continue with install: ServiceAccount 'circleci-runner' exists and cannot be imported into the current release"*
+
 ## Support Scope
 - Customers who modify the chart beyond values in `values.yaml` do so at their own risk. The type of support CircleCI provides for those customizations will be limited.
 
