@@ -71,6 +71,15 @@ $ helm install "circleci-runner" ./ \
   --namespace your-namespace
 ```
 
+### Setup with parametrized Service Account 
+There may be cases where a service account does not need to be created, or one already exists that should be reused. The `values.yaml` file can be modified to accommodate this scenario. 
+
+A new service account is created by default with the suggested values.yaml file. Setting the account name to `circleci-runner`. The `serviceAccount.name` value in `values.yaml` can be modified to a different name as required for deployment. 
+
+An existing service account can be reused by setting the `serviceAccount.name` parameter in the `values.yaml` file to the name of the existing account, and setting `serviceAccount.create` to `false`. This may be required when creating multiple helm releases from this chart. 
+
+More details about using and configuring a service account can be found in the [Helm documentation](https://helm.sh/docs/chart_best_practices/rbac/#yaml-configuration).
+
 ## Support Scope
 - Customers who modify the chart beyond values in `values.yaml` do so at their own risk. The type of support CircleCI provides for those customizations will be limited.
 
