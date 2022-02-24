@@ -3,7 +3,6 @@
 Repository with various files to install CircleCI's runner on Kubernetes via Helm chart.
 
 ## Prerequisites
-- You must be on our [Scale Plan](https://circleci.com/pricing/) or sign up for a trial. [Reach out to our sales team](https://circleci.com/contact-us/?cloud) to ask about both.
 - [Generate a token and resource class](https://circleci.com/docs/2.0/runner-installation/?section=executors-and-images#authentication) for your runner. For each different type of runner you want to run, you will need to repeat these same steps.
   - For example, if you want ten runners that pull the same types of jobs or run the same [parallel job](https://circleci.com/docs/2.0/parallelism-faster-jobs/) based on availability, you only need to create one runner resource class. All ten runners would share the same token.
   - If you want to run ten separate runners that pull different jobs that do different things, we recommend creating ten different runner resource classes. Each one would have a different name and use a different token, and you would a copy of this Helm chart for each type of runner resource.
