@@ -20,6 +20,8 @@ configSecret:
 serviceAccount:
   create: true
   name: circleci-runner
+  annotations: {}
+#    eks.amazonaws.com/role-arn: "arn:aws:iam:..."
 
 # Refers to the resource class you created for your runner. See:
 # https://circleci.com/docs/2.0/runner-installation/?section=executors-and-images#authentication
