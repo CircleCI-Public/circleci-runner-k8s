@@ -53,6 +53,7 @@ jobs:
 
 ### Set Environment Variables
 Environment variables can be configured in `env` section of the `values.yaml` file. Environment variables can be used to further configure the CircleCI Runner using the environment variables described in the [configuration reference page](https://circleci.com/docs/2.0/runner-config-reference/).
+It's also possible to add additional Kubernetes secret references (see example in `env` section of `values.yaml`.
  
 ### Setup with Optional Secret Creation
 There may be cases where you do not want Helm to create the Secret resource for you. One case would be if you were using a GitOps deployment tool such as ArgoCD or Flux. In these cases you would need to create a secret manually in the same namespace and cluster where the Helm managed runner resources will be deployed.

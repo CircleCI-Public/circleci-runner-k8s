@@ -61,6 +61,12 @@ tolerations: []
 
 affinity: {}
 
-env:
-  - name: "MY_VAR"
-    value: "the value of MY_VAR"
+env: {}
+  # Example:
+  # - name: MY_VAR
+  #   value: "the value of MY_VAR"
+  # - name: FOO_SECRET
+  #   valueFrom:
+  #     secretKeyRef:
+  #       key: foo
+  #       name: bar
