@@ -49,7 +49,14 @@ spec:
             {{- end }}
             {{- range .Values.env }}
             - name: {{ .name }}
+              {{- if .value }}
               value: {{ .value }}
+              {{- else if .valueFrom.secretKeyRef }}
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .valueFrom.secretKeyRef.key }}
+                  name: {{ .valueFrom.secretKeyRef.name }}
+              {{- end }}
             {{- end }}
           livenessProbe:
             exec:
