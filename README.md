@@ -14,7 +14,7 @@ Repository with various files to install CircleCI's runner on Kubernetes via Hel
 
 Value             | Description                  | Default
 ------------------|------------------------------|-------------
-image.repository<br />image.tag | You can [extend a custom Docker image](https://circleci.com/docs/2.0/runner-installation/?section=executors-and-images#create-a-dockerfile-that-extends-the-circleci-runner-image) from the CircleCI default runner and use that instead. | `circleci/runner`<br />`launch-agent`
+image.repository<br />image.tag | You can [extend a custom Docker image](https://circleci.com/docs/2.0/runner-installation-docker/#create-a-dockerfile-that-extends-the-circleci-self-hosted-runner-image) from the CircleCI default runner and use that instead. | `circleci/runner`<br />`launch-agent`
 replicaCount      | The number of replicas of this runner you want in your cluster. Must currently be set and updated manually. See [pending work](#known-issuespending-work) | 1
 resourceClass     | The resource class you created for your runner. We recommend not inserting it into `values.yaml` directly and setting it when you install your chart instead. See next step. | ""
 runnerToken       | The token you created for your runner. We recommend not inserting it into `values.yaml` directly and setting it when you install your chart instead. See next step. | ""
