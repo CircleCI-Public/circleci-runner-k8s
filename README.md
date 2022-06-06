@@ -3,7 +3,7 @@
 Repository with various files to install CircleCI's runner on Kubernetes via Helm chart.
 
 ## Prerequisites
-- [Generate a token and resource class](https://circleci.com/docs/2.0/runner-installation/?section=executors-and-images#authentication) for your runner. For each different type of runner you want to run, you will need to repeat these same steps.
+- [Generate a token and resource class](https://circleci.com/docs/2.0/runner-installation-cli/#command-line-installation) for your runner. For each different type of runner you want to run, you will need to repeat these same steps.
   - For example, if you want ten runners that pull the same types of jobs or run the same [parallel job](https://circleci.com/docs/2.0/parallelism-faster-jobs/) based on availability, you only need to create one runner resource class. All ten runners would share the same token.
   - If you want to run ten separate runners that pull different jobs that do different things, we recommend creating ten different runner resource classes. Each one would have a different name and use a different token, and you would a copy of this Helm chart for each type of runner resource.
 - Have a Kubernetes cluster (and nodes) you would like to install the runner pod(s) in.
@@ -14,8 +14,8 @@ Repository with various files to install CircleCI's runner on Kubernetes via Hel
 
 Value             | Description                  | Default
 ------------------|------------------------------|-------------
-image.repository<br />image.tag | You can [extend a custom Docker image](https://circleci.com/docs/2.0/runner-installation-docker/#create-a-dockerfile-that-extends-the-circleci-self-hosted-runner-image) from the CircleCI default runner and use that instead. | `circleci/runner`<br />`launch-agent`
-replicaCount      | The number of replicas of this runner you want in your cluster. Must currently be set and updated manually. See [pending work](#known-issuespending-work) | 1
+image.repository<br />image.tag | You can [extend a custom Docker image](https://circleci.com/docs/2.0/runner-installation-docker/#create-a-dockerfile-that-extends-the-circleci-self-hosted-runner-image) from the CircleCI default runner and use that instead.<br />For CircleCI Enterprise installations, see the compatible version tags [here](https://circleci.com/docs/2.0/runner-installation-cli/#self-hosted-runners-for-server-compatibility). | `circleci/runner`<br />`launch-agent`
+replicaCount      | The number of replicas of this runner you want in your cluster. Must currently be set and updated manually. See [pending work](#known-issuespending-work). | 1
 resourceClass     | The resource class you created for your runner. We recommend not inserting it into `values.yaml` directly and setting it when you install your chart instead. See next step. | ""
 runnerToken       | The token you created for your runner. We recommend not inserting it into `values.yaml` directly and setting it when you install your chart instead. See next step. | ""
 All other values  | Modify at your own discretion and risk. | N/A
