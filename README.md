@@ -1,3 +1,5 @@
+**CircleCI has a new [container runner](https://circleci.com/docs/container-runner) in open preview, which will replace the self-hosted runner on Kubernetes solution detailed on this page.**
+
 # CircleCI Runner on Kubernetes
 
 Repository with various files to install CircleCI's runner on Kubernetes via Helm chart.
