@@ -1,7 +1,7 @@
 **CircleCI has a new [Container runner](https://circleci.com/docs/container-runner) in open preview.**
 
 # Introduction
-This installation guide is to help set up self-hosted runners that use the Machine executor on your Kubernetes cluster. This is the deprecated way of using self-hosted runners with Kubernetes.  The docs are being kept here for users still using the deprecated method.  [Container runner](https://circleci.com/docs/container-runner) is the supported way for running self-hosted runners on Kubernetes.
+This installation guide is to help set up self-hosted runners that use [launch-agent](https://circleci.com/docs/runner-concepts#launch-agent-and-task-agent) on your Kubernetes cluster. This is the deprecated way of using self-hosted runners with Kubernetes.  The docs are being kept here for users still using the deprecated method.  [Container runner](https://circleci.com/docs/container-runner) is the supported way for running self-hosted runners on Kubernetes.
 
 The Helm chart will spin up one or more pods of *the same self-hosted runner resource class*. This is useful for when you want all of these self-hosted runners to execute jobs requesting the same execution environment. Each runner will pull jobs off the queue on an as-available basis.
 
