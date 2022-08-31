@@ -1,11 +1,19 @@
 **CircleCI has a new [container runner](https://circleci.com/docs/container-runner) in open preview, which will replace the self-hosted runner on Kubernetes solution detailed on this page.**
 
-# CircleCI Runner on Kubernetes
+# Introduction
 
-Repository with various files to install CircleCI's runner on Kubernetes via Helm chart.
+This installation guide is to help set up self-hosted runners that use the Machine executor on your Kubernetes cluster. This is the deprecated way of using self-hosted runners with Kubernetes.  The docs are being kept here for users still using the deprecated method.  [Container runner](https://circleci.com/docs/container-runner) is the supported way for running self-hosted runners on Kubernetes.
+
+The Helm chart will spin up one or more pods of *the same self-hosted runner resource class*. This is useful for when you want all of these self-hosted runners to execute jobs requesting the same execution environment. Each runner will pull jobs off the queue on an as-available basis.
+
+If you want to have different self-hosted runners specialized for different workloads, it is recommended to create different self-hosted runner resource classes and rerun these instructions and have separate charts for each self-hosted runner class you create.
+
+If you are using **Server**, please make sure you read <<circleci-server-installation, CircleCI server installation>>.
+
 
 ## Prerequisites
-- [Generate a token and resource class](https://circleci.com/docs/2.0/runner-installation-cli/#command-line-installation) for your runner. For each different type of runner you want to run, you will need to repeat these same steps.
+- Have a Kubernetes cluster up and running where you'd like to deploy your self-hosted runner(s)
+- [Generate a token and resource class](https://circleci.com/docs/runner-installation). For each different type of self-hosted runner you want to run, you will need to repeat these same steps.
   - For example, if you want ten runners that pull the same types of jobs or run the same [parallel job](https://circleci.com/docs/2.0/parallelism-faster-jobs/) based on availability, you only need to create one runner resource class. All ten runners would share the same token.
   - If you want to run ten separate runners that pull different jobs that do different things, we recommend creating ten different runner resource classes. Each one would have a different name and use a different token, and you would a copy of this Helm chart for each type of runner resource.
 - Have a Kubernetes cluster (and nodes) you would like to install the runner pod(s) in.
@@ -56,6 +64,25 @@ jobs:
 ### Set Environment Variables
 Environment variables can be configured in `env` section of the `values.yaml` file. Environment variables can be used to further configure the CircleCI Runner using the environment variables described in the [configuration reference page](https://circleci.com/docs/2.0/runner-config-reference/).
 It's also possible to add additional Kubernetes secret references (see example in `env` section of `values.yaml`.
+
+### Chart Values
+
+Customizable parameters are left inside the `+values.yaml+` file. See the following chart for information about each of the values:
+
+How do i make this table i markdown???
+[.table]
+[cols=4*, options="header"]
+[cols="2,1,1,4"]
+|===
+| Value             | Default   | Required? | Description
+
+| `+image.repository+`
+`+image.tag+`
+| `+circleci/runner+`
+`+launch-agent+`
+| Y
+| You can extend a [custom Docker image](https://circleci.com/docs/runner-installation-docker) from the CircleCI default self-hosted runner and use that instead.
+
  
 ### Setup with Optional Secret Creation
 There may be cases where you do not want Helm to create the Secret resource for you. One case would be if you were using a GitOps deployment tool such as ArgoCD or Flux. In these cases you would need to create a secret manually in the same namespace and cluster where the Helm managed runner resources will be deployed.
@@ -83,13 +110,13 @@ An existing service account can be reused by setting the `serviceAccount.name` p
 More details about using and configuring a service account can be found in the [Helm documentation](https://helm.sh/docs/chart_best_practices/rbac/#yaml-configuration).
 
 ## Support Scope
-- Customers who modify the chart beyond values in `values.yaml` do so at their own risk. The type of support CircleCI provides for those customizations will be limited.
+- Customers who modify the chart beyond values in `values.yaml` do so at their own risk. The type of support CircleCI provides for those customizations will be limited.   [Container Runner](https://circleci.com/docs/container-runner) is the recommended method for using self-hosted runners with Kubernetes.
 
 ## Reporting Issues
 - Customers are encouraged to open issues here to report bugs or problems, and [open support tickets](https://support.circleci.com/hc/en-us/) to receive specific help from support engineers.
 
-## Known Issues/Pending Work
-- Autoscaling is not yet implemented - for now, you'll need to manually modify the `replicaCount` in `values.yaml` and update the cluster and run:
+## Limitations
+- Autoscaling is not implemented - you'll need to manually modify the `replicaCount` in `values.yaml` and update the cluster and run:
 
 ```bash
 $ helm upgrade "circleci-runner" ./ \
@@ -98,4 +125,24 @@ $ helm upgrade "circleci-runner" ./ \
   --namespace your-namespace
 ```
 
-- Containers are not currently privileged, so you would not be able to execute privileged workloads (e.g., Docker in Docker).
+- Containers are not privileged, so you would not be able to execute privileged workloads (e.g., Docker in Docker).
+
+# CircleCI Server Installation
+
+When installing the Helm chart for use with a CircleCI server installation, the `+image.tag+` will need to be set to the pinned launch agent version specified in the [Self-hosted Runner Installation](https://circleci.com/docs/runner-installation-cli#self-hosted-runners-for-server-compatibility) instructions. The `LAUNCH_AGENT_API_URL` will also need to be set as an environment variable. This can be done with the `--set` flag, or in the `env` section of the `values.yaml` file, specifying the hostname or address of the server installation.
+
+# Upgrading Self-hosted Runner Deployment for Server
+
+. Modify the `+values.yaml+` file to specify the new `+image.tag+` to update to. Refer to the <<Chart Values>> section of this document for more details about the `+values.yaml+` file.
+. Deploy the changes to the cluster 
++
+```shell
+$ helm upgrade -f values.yaml "circleci-runner" ./ \
+  --set runnerToken=$CIRCLECI_RUNNER_TOKEN \
+  --set resourceClass=$CIRCLECI_RUNNER_RESOURCE_CLASS \
+  --set env.LAUNCH_AGENT_API_URL=<server_host> \
+  --namespace your-namespace
+```
++
+
+Further information about the `$ helm upgrade` command and its usage can be found in the [helm documentation](https://helm.sh/docs/helm/helm_upgrade/)
