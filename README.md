@@ -1,11 +1,11 @@
-**CircleCI has a new [Container runner](https://circleci.com/docs/container-runner) in open preview.**
+> **Warning** CircleCI has a new [Container runner](https://circleci.com/docs/container-runner) in open preview.  Container runner is the supported method > for using self-hosted runners with Kubernetes.  This documentation is meant for existing users who have not yet migrated to using the container runner.
 
 # Introduction
-This installation guide is to help set up self-hosted runners that use [launch-agent](https://circleci.com/docs/runner-concepts#launch-agent-and-task-agent) on your Kubernetes cluster. This is the deprecated way of using self-hosted runners with Kubernetes.  The docs are being kept here for users still using the deprecated method.  [Container runner](https://circleci.com/docs/container-runner) is the supported way for running self-hosted runners on Kubernetes.
+This guide is a reference for setting up self-hosted runners that use [launch-agent](https://circleci.com/docs/runner-concepts#launch-agent-and-task-agent) on your Kubernetes cluster. **This is the *deprecated* way of using self-hosted runners with Kubernetes.**  The reference guide is being kept here for users still using this deprecated method.  Users looking to use self-hosted runners with Kubernetes should be using the **[container runner] (https://circleci.com/docs/container-runner) for current documentation**.  
 
-The Helm chart will spin up one or more pods of *the same self-hosted runner resource class*. This is useful for when you want all of these self-hosted runners to execute jobs requesting the same execution environment. Each runner will pull jobs off the queue on an as-available basis.
+This Helm chart will spin up one or more pods of *the same self-hosted runner resource class*. Each runner will pull jobs off the queue on an as-available basis.
 
-If you want to have different self-hosted runners specialized for different workloads, it is recommended to create different self-hosted runner resource classes and rerun these instructions and have separate charts for each self-hosted runner class you create.
+If you want to have different self-hosted runners specialized for different workloads, use the [container runner](https://circleci.com/docs/container-runner) to have multiple resource classes associated with the same container runner.
 
 If you are using **Server**, please make sure you read [CircleCI server installation](#circleci-server-installation).
 
@@ -13,8 +13,6 @@ If you are using **Server**, please make sure you read [CircleCI server installa
 - Have a Kubernetes cluster up and running where you'd like to deploy your self-hosted runner(s).
 - [Generate a token and resource class](https://circleci.com/docs/runner-installation). For each different type of self-hosted runner you want to run, you will need to repeat these same steps.
   - For example, if you want ten runners that pull the same types of jobs or run the same [parallel job](https://circleci.com/docs/parallelism-faster-jobs/) based on availability, you only need to create one runner resource class. All ten runners would share the same token.
-  - If you want to run ten separate runners that pull different jobs that do different things, we recommend creating ten different runner resource classes. Each one would have a different name and use a different token, and you would a copy of this Helm chart for each type of runner resource.
-- Have a Kubernetes cluster (and nodes) you would like to install the runner pod(s) in.
 
 ## Setup
 1. Clone this repository.
@@ -77,7 +75,7 @@ $ helm install "circleci-runner" ./ \
   --namespace your-namespace
 ```
 
-### Setup with parametrized Service Account 
+### Setup with parameterized Service Account 
 There may be cases where a service account does not need to be created, or one already exists that should be reused. The `values.yaml` file can be modified to accommodate this scenario.
 
 A new service account is created by default with the suggested values.yaml file. Setting the account name to `circleci-runner`. The `serviceAccount.name` value in `values.yaml` can be modified to a different name as required for deployment.
@@ -89,13 +87,9 @@ More details about using and configuring a service account can be found in the [
 ## Support Scope
 Customers who modify the chart beyond values in `values.yaml` do so at their own risk. The type of support CircleCI provides for those customizations will be limited.   [Container runner](https://circleci.com/docs/container-runner) is the recommended method for using self-hosted runners with Kubernetes.
 
-## Reporting Issues
-Customers are encouraged to open issues here to report bugs or problems, and [open support tickets](https://support.circleci.com/hc/en-us/) to receive specific help from support engineers.
-
 ## Limitations
 - Autoscaling is not supported. [Container runner](https://circleci.com/docs/container-runner) supports autoscaling.
-
-- Containers are not privileged, so you would not be able to execute privileged workloads (e.g., Docker in Docker).
+- Containers are not privileged, so you cannot execute privileged workloads (e.g., Docker in Docker).
 
 # CircleCI Server Installation
 
