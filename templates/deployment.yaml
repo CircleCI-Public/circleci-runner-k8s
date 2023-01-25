@@ -32,6 +32,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+          - secretRef:
+                name: "{{ .Chart.Name }}-secrets"
           env:
             - name: "CIRCLECI_RESOURCE_CLASS"
               valueFrom:
@@ -43,6 +46,8 @@ spec:
                 secretKeyRef:
                   key: runnerToken
                   name: {{ .Values.configSecret.name }}
+            - name: "DBT_PRIVATE_KEY_PATH"
+              value: /tmp/SNOWFLAKE_PRIVATE_KEY
             {{- range .Values.env }}
             - name: {{ .name }}
               {{- if .value }}
@@ -64,6 +69,20 @@ spec:
             periodSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: dbt-secrets
+              readOnly: True
+              mountPath: /etc/snowflake/
+            - name: dbt-profile
+              readOnly: False
+              mountPath: /home/circleci/.dbt
+      volumes:
+        - name: dbt-secrets
+          secret: 
+            secretName: {{ .Chart.Name }}-secrets
+        - name: dbt-profile
+          configMap:
+            name: dbt-profile-cm
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

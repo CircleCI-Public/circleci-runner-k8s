@@ -60,12 +60,20 @@ tolerations: []
 
 affinity: {}
 
-env: {}
-  # Example:
-  # - name: MY_VAR
-  #   value: "the value of MY_VAR"
-  # - name: FOO_SECRET
-  #   valueFrom:
-  #     secretKeyRef:
-  #       key: foo
-  #       name: bar
+env:
+  - name: DBT_TGT
+    value: prod-airflow
+  - name: DBT_TYPE
+    value: snowflake
+  - name: DBT_ACCOUNT
+    value: yla59983.us-east-1
+  - name: DBT_USER
+    value: svc_dbt
+  - name: DBT_ROLE
+    value: svc_dbt
+  - name: SNOWFLAKE_DATABASE
+    value: SOURCE_TMI_SERVICES
+  - name: DBT_SCHEMA
+    value: public
+  - name: DBT_WH
+    value: DBT_WH
