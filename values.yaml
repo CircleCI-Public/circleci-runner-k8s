@@ -62,7 +62,7 @@ affinity: {}
 
 env:
   - name: DBT_TGT
-    value: prod-airflow
+    value: prod-circle-ci
   - name: DBT_TYPE
     value: snowflake
   - name: DBT_ACCOUNT
@@ -70,10 +70,13 @@ env:
   - name: DBT_USER
     value: svc_dbt
   - name: DBT_ROLE
-    value: svc_dbt
+    value: DBT_CONNECT
   - name: SNOWFLAKE_DATABASE
     value: SOURCE_TMI_SERVICES
   - name: DBT_SCHEMA
     value: public
   - name: DBT_WH
     value: DBT_WH
+  - name: DBT_DB
+    value: thrasio_prod
+threads: 5

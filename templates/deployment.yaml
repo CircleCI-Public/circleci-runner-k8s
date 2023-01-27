@@ -48,6 +48,8 @@ spec:
                   name: {{ .Values.configSecret.name }}
             - name: "DBT_PRIVATE_KEY_PATH"
               value: /tmp/SNOWFLAKE_PRIVATE_KEY
+            - name: "DBT_THREADS"
+              value: {{ .Values.threads | quote }}
             {{- range .Values.env }}
             - name: {{ .name }}
               {{- if .value }}

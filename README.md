@@ -1,3 +1,6 @@
+> ** Thrasio Alterations **
+> We added a few things to support building DBT documentation in our runners. Ideally this whole thing is replaced by the container runner referenced below and it can all be encapsulated in a Docker image. See some notes on how to deploy [here](https://thrasio.atlassian.net/wiki/spaces/~854613429/pages/2755657729/CircleCI+Runners)
+
 > **Warning**  [Container runner](https://circleci.com/docs/container-runner) is the supported method  for using self-hosted runners with Kubernetes.  This documentation is meant for existing users who have not yet migrated to using the container runner.
 
 # Deprecated method for using self-hosted runners on k8s

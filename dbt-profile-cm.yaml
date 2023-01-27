@@ -1,13 +1,15 @@
 default:
     target: "{{ env_var('DBT_TGT') }}"
     outputs:
-        prod-airflow:
+        prod-circle-ci:
             type: "{{ env_var('DBT_TYPE') }}"
             account: "{{ env_var('DBT_ACCOUNT') }}"
             user: "{{ env_var('DBT_USER') }}"
+            role: "{{ env_var('DBT_ROLE') }}"
             private_key_path: "{{ env_var('DBT_PRIVATE_KEY_PATH') }}"
             private_key_passphrase: "{{ env_var('DBT_AIRFLOW_USER_PRIVATE_KEY_PASS') }}"
-            database: "{{ 'dbt_' + env_var('DBT_USER') }}"
+            database: "{{ env_var('DBT_DB') }}"
             warehouse: "{{ env_var('DBT_WH') }}"
             schema: "{{ env_var('DBT_SCHEMA') }}"
             query_tag: "{{ env_var('DBT_USER') }}"
+            threads: "{{ env_var('DBT_THREADS') | as_number }}"
