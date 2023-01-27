@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+replicaCount: 5
 
 # You can extend a custom image from our runner and use
 # that repository instead. See:
@@ -60,12 +60,23 @@ tolerations: []
 
 affinity: {}
 
-env: {}
-  # Example:
-  # - name: MY_VAR
-  #   value: "the value of MY_VAR"
-  # - name: FOO_SECRET
-  #   valueFrom:
-  #     secretKeyRef:
-  #       key: foo
-  #       name: bar
+env:
+  - name: DBT_TGT
+    value: prod-circle-ci
+  - name: DBT_TYPE
+    value: snowflake
+  - name: DBT_ACCOUNT
+    value: yla59983.us-east-1
+  - name: DBT_USER
+    value: svc_dbt
+  - name: DBT_ROLE
+    value: DBT_CONNECT
+  - name: SNOWFLAKE_DATABASE
+    value: SOURCE_TMI_SERVICES
+  - name: DBT_SCHEMA
+    value: public
+  - name: DBT_WH
+    value: DBT_WH
+  - name: DBT_DB
+    value: thrasio_prod
+threads: 5

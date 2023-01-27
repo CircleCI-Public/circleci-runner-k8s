@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dbt-profile-cm
+data:
+  profiles.yml: |
+{{ $.Files.Get "dbt-profile-cm.yaml" | indent 4}}
