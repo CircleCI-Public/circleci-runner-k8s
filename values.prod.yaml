@@ -2,9 +2,11 @@ resourceClass: dabs-prod-env
 
 externalSecrets:
   data:
-  - key: prod/dbt/snowflake
-    name: DBT_AIRFLOW_USER_PRIVATE_KEY_PASS
-    property: DBT_AIRFLOW_USER_PRIVATE_KEY_PASS
-  - key: prod/dbt/snowflake
-    name: SNOWFLAKE_PRIVATE_KEY_BASE64
-    property: DBT_AIRFLOW_USER_PRIVATE_KEY_BASE64
+  - secretKey: DBT_AIRFLOW_USER_PRIVATE_KEY_PASS
+    remoteRef:
+      key: prod/dbt/snowflake
+      property: DBT_AIRFLOW_USER_PRIVATE_KEY_PASS
+  - secretKey: SNOWFLAKE_PRIVATE_KEY_BASE64
+    remoteRef:
+      key: prod/dbt/snowflake
+      property: DBT_AIRFLOW_USER_PRIVATE_KEY_BASE64
