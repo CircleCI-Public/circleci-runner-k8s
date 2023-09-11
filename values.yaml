@@ -62,7 +62,7 @@ affinity: {}
 
 env:
   - name: DBT_TGT
-    value: prod-circle-ci
+    value: prod
   - name: DBT_TYPE
     value: snowflake
   - name: DBT_ACCOUNT

@@ -1,7 +1,7 @@
 default:
     target: "{{ env_var('DBT_TGT') }}"
     outputs:
-        prod-circle-ci:
+        prod: &prod
             type: "{{ env_var('DBT_TYPE') }}"
             account: "{{ env_var('DBT_ACCOUNT') }}"
             user: "{{ env_var('DBT_USER') }}"
@@ -13,3 +13,5 @@ default:
             schema: "{{ env_var('DBT_SCHEMA') }}"
             query_tag: "{{ env_var('DBT_USER') }}"
             threads: "{{ env_var('DBT_THREADS') | as_number }}"
+        staging:
+            <<: *prod
